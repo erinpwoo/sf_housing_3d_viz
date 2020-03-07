@@ -1,15 +1,14 @@
 import peasy.*;
 import javafx.util.Pair;
+import java.util.*;
 PeasyCam cam;
 Table evic_table;
 Table gen_table;
 int evic_row_ct;
 int gen_row_ct;
-int countMin;
-int countMax;
 String url = "https://geo.fcc.gov/api/census/area?";
 HashMap<String, String> geo_fips;
-ArrayList<Eviction> evictions = new ArrayList<Eviction>();
+HashMap<String, Eviction> evictions = new HashMap<String, Eviction>();
 
 void setup() {
   size(1200, 600, P3D);
@@ -43,19 +42,26 @@ void setup() {
       int[] parsedDate = {month, day, year};
       JSONObject res = loadJSONObject(url + "lon=" + loc.getKey() + "&lat=" + loc.getValue());
       String fips = String.valueOf(res.getJSONArray("results").getJSONObject(0).getString("block_fips").substring(1,11));
-      evictions.add(new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(fips), fips));
+      int date_num = (year - 1996)*365 +  (month *  30) + day;
+      Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(fips), fips, date_num);
+      evictions.put(area, e);
       //println(loc.getKey() + " " + loc.getValue() + " " + area + " " + addr + " " + parsedDate[0]+parsedDate[1]+parsedDate[2] + " " +  geo_fips.get(fips));
     }
   }
 }
 
 void draw() {
-  
+  background(0,0,0);
+  drawData();
 }
 
 void drawData() {
+  Iterator itr = evictions.entrySet().iterator();
   
-}
+  while (itr.hasNext()) {
+    drawPoint((Eviction)(((Map.Entry)itr.next()).getValue()));
+  }
+}  
 
 Pair<Double, Double> parseLoc(String in) {
   String str = in.substring(7, in.length()-1);

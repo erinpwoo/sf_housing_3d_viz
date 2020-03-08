@@ -9,7 +9,7 @@ int gen_row_ct;
 double max_lon, max_lat, min_lon, min_lat;
 String url = "https://geo.fcc.gov/api/census/area?";
 HashMap<String, String> geo_fips;
-HashMap<String, Eviction> evictions = new HashMap<String, Eviction>();
+ArrayList<Eviction> evictions = new ArrayList<Eviction>();
 
 void setup() {
   size(1200, 600, P3D);
@@ -33,15 +33,15 @@ void setup() {
   min_lat = Double.MAX_VALUE;
 
   for (int i = 0; i < evic_row_ct; i++) {
-    if ((evic_table.getString(i, 29).length() > 1)) {
+    if ((evic_table.getString(i, 29).length() > 0)) {
       Pair<Double, Double> loc = parseLoc(evic_table.getString(i, 29));
       String area = evic_table.getString(i, 28);
       String addr = evic_table.getString(i, 2);
       // parsing date
       String[] date = split(evic_table.getString(i, 6), '-');
-      int month = Integer.parseInt(date[1]);
-      int day = Integer.parseInt(date[2]);
-      int year = Integer.parseInt(date[0]);
+      int month = Integer.parseInt(date[0]);
+      int day = Integer.parseInt(date[1]);
+      int year = Integer.parseInt(date[2]);
       int[] parsedDate = {month, day, year};
       
       int date_num = (year - 1996)*365 +  (month *  30) + day;
@@ -59,9 +59,10 @@ void setup() {
       }
 
       Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(" "), " ", date_num);
-      evictions.put(area, e);
+      evictions.add(e);
     }
   }
+  print(len(evictions));
 }
 
 void draw() {

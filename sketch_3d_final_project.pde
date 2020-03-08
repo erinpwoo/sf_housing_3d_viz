@@ -15,7 +15,7 @@ void setup() {
   size(1200, 600, P3D);
   cam = new PeasyCam(this, 10);
   smooth();
-  evic_table = loadTable("Eviction_Notices.csv", "header");
+  evic_table = loadTable("Evictions_fips.csv", "header");
   gen_table = loadTable("udp_2017results.csv", "header");
 
   evic_row_ct = evic_table.getRowCount();
@@ -33,18 +33,17 @@ void setup() {
   min_lat = Double.MAX_VALUE;
 
   for (int i = 0; i < evic_row_ct; i++) {
-    if ((evic_table.getString(i, 28).length() > 1)) {
-      Pair<Double, Double> loc = parseLoc(evic_table.getString(i, 28));
-      String area = evic_table.getString(i, 27);
-      String addr = evic_table.getString(i, 1);
+    if ((evic_table.getString(i, 29).length() > 1)) {
+      Pair<Double, Double> loc = parseLoc(evic_table.getString(i, 29));
+      String area = evic_table.getString(i, 28);
+      String addr = evic_table.getString(i, 2);
       // parsing date
-      String[] date = split(evic_table.getString(i, 5), '-');
+      String[] date = split(evic_table.getString(i, 6), '-');
       int month = Integer.parseInt(date[1]);
       int day = Integer.parseInt(date[2]);
       int year = Integer.parseInt(date[0]);
       int[] parsedDate = {month, day, year};
-      //JSONObject res = loadJSONObject(url + "lon=" + loc.getKey() + "&lat=" + loc.getValue());
-      //String fips = String.valueOf(res.getJSONArray("results").getJSONObject(0).getString("block_fips").substring(1,11));
+      
       int date_num = (year - 1996)*365 +  (month *  30) + day;
       if (loc.getKey() > max_lon) {
         max_lon = loc.getKey();
@@ -63,7 +62,6 @@ void setup() {
       evictions.put(area, e);
     }
   }
-  print(evic_row_ct);
 }
 
 void draw() {

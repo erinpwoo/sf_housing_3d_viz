@@ -21,11 +21,11 @@ class Eviction {
 }
 
 void drawPoint(Eviction evic) {
-  float lon = map((float)evic.lon, (float)min_lon, (float)max_lon, -1000.0, 1000.0);
-  float lat =  map((float)evic.lat, (float)min_lat, (float)max_lat, -1000.0, 1000.0);
+  float lon = map((float)evic.lon, (float)min_lon, (float)max_lon, -3000.0, 3000.0);
+  float lat =  map((float)evic.lat, (float)min_lat, (float)max_lat, -3000.0, 3000.0);
   pushMatrix();
   translate(lon, lat, evic.date_num);
-  strokeWeight(10);
+  strokeWeight(3);
   translate(width/2, height/2);
   stroke(247, 95, 0);
   point(0, 0, 0);

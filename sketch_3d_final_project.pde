@@ -9,11 +9,12 @@ int gen_row_ct;
 double max_lon, max_lat, min_lon, min_lat;
 String url = "https://geo.fcc.gov/api/census/area?";
 HashMap<String, String> geo_fips;
-ArrayList<Eviction> evictions = new ArrayList<Eviction>();
+HashMap<String, ArrayList<Eviction>> evic_map = new HashMap<String, ArrayList<Eviction>>();
 
 void setup() {
   size(1200, 600, P3D);
   cam = new PeasyCam(this, 10);
+  cam.setDistance(3000);
   smooth();
   evic_table = loadTable("Evictions_fips.csv", "header");
   gen_table = loadTable("udp_2017results.csv", "header");
@@ -59,10 +60,14 @@ void setup() {
       }
 
       Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(" "), " ", date_num);
-      evictions.add(e);
+      ArrayList<Eviction> prev = evic_map.get(area);
+      if (prev == null) {
+        prev = new ArrayList<Eviction>();
+      }
+      prev.add(e);
+      evic_map.put(area, prev);
     }
   }
-  print(len(evictions));
 }
 
 void draw() {
@@ -70,14 +75,36 @@ void draw() {
   noStroke();
   fill(200, 20);
   drawData();
+  
+  Iterator itr = evic_map.entrySet().iterator();
+  while (itr.hasNext()) {
+    ArrayList<Eviction> evic = (ArrayList<Eviction>)((Map.Entry)itr.next()).getValue();
+    drawEdges(evic);
+  }
 }
 
 void drawData() {
-  Iterator itr = evictions.entrySet().iterator();
+  Iterator itr = evic_map.entrySet().iterator();
   while (itr.hasNext()) {
-    drawPoint((Eviction)(((Map.Entry)itr.next()).getValue()));
+    ArrayList<Eviction> evic = (ArrayList<Eviction>)((Map.Entry)itr.next()).getValue();
+    for (Eviction e : evic) {
+      drawPoint(e);
+    }
   }
-}  
+} 
+
+void drawEdges(ArrayList<Eviction> e) {
+  beginShape();
+  for (Eviction evic: e) {
+    float lon = map((float)evic.lon, (float)min_lon, (float)max_lon, -3000.0, 3000.0);
+    float lat =  map((float)evic.lat, (float)min_lat, (float)max_lat, -3000.0, 3000.0); 
+    pushMatrix();
+    translate(lon, lat, evic.date_num);
+    vertex(0,0,0);
+    popMatrix();
+  }
+  endShape();
+}
 
 Pair<Double, Double> parseLoc(String in) {
   String str = in.substring(7, in.length()-1);

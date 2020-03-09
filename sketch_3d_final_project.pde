@@ -14,8 +14,8 @@ int maxCount;
 int minCount;
 
 void setup() {
-  fullScreen(P3D);
-  cam = new PeasyCam(this, 1000);
+  size(1200, 600, P3D);
+  cam = new PeasyCam(this, 1300, -2000, 35000, 0);
   perspective();
   smooth();
   evic_table = loadTable("Evictions_fips.csv", "header");
@@ -34,6 +34,9 @@ void setup() {
   max_lat = -Double.MAX_VALUE;
   min_lon = Double.MAX_VALUE;
   min_lat = Double.MAX_VALUE;
+  
+  maxCount = Integer.MIN_VALUE;
+  minCount = Integer.MAX_VALUE;
 
   for (int i = 0; i < evic_row_ct; i++) {
     if ((evic_table.getString(i, 29).length() > 0)) {
@@ -70,6 +73,17 @@ void setup() {
       evic_map.put(area, prev);
     }
   }
+  
+  Iterator itr = evic_map.entrySet().iterator();
+  while (itr.hasNext()) {
+    ArrayList<Eviction> evic = (ArrayList<Eviction>)((Map.Entry)itr.next()).getValue();
+    if (evic.size() > maxCount) {
+      maxCount = evic.size(); 
+    }
+    if (evic.size() < minCount) {
+      minCount = evic.size(); 
+    }
+  }
 }
 
 void draw() {
@@ -99,6 +113,7 @@ void drawEdges(ArrayList<Eviction> e) {
   strokeWeight(.1);
   //noFill();
   int[] colors = getColorForArea(e.get(0));
+  
   color c = color(colors[0],colors[1],colors[2],e.size());
   fill(c);
   stroke(c);

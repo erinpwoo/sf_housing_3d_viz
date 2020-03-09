@@ -27,7 +27,9 @@ void drawPoint(Eviction evic) {
   translate(lon, lat, evic.date_num);
   strokeWeight(3);
   translate(width/2, height/2);
-  stroke(247, 95, 0);
+  int[] colors = getColorForArea(evic);
+  color c = color(colors[0],colors[1],colors[2]);
+  stroke(c);
   point(0, 0, 0);
   popMatrix();
 }

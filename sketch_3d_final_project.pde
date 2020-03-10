@@ -7,7 +7,6 @@ Table gen_table;
 int evic_row_ct;
 int gen_row_ct;
 double max_lon, max_lat, min_lon, min_lat;
-String url = "https://geo.fcc.gov/api/census/area?";
 HashMap<String, String> geo_fips;
 HashMap<String, ArrayList<Eviction>> evic_map = new HashMap<String, ArrayList<Eviction>>();
 int maxCount;
@@ -15,11 +14,10 @@ int minCount;
 
 void setup() {
   size(1200, 600, P3D);
-  cam = new PeasyCam(this, 1300, -2000, 35000, 0);
-  perspective();
+  setupCamera();
   smooth();
   evic_table = loadTable("Evictions_fips.csv", "header");
-  gen_table = loadTable("udp_2017results.csv", "header");
+  gen_table = loadTable("udp_2017.csv", "header");
 
   evic_row_ct = evic_table.getRowCount();
   gen_row_ct = gen_table.getRowCount();
@@ -64,15 +62,15 @@ void setup() {
       if (loc.getValue() < min_lat) {
         min_lat = loc.getValue();
       }
-      
-      Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(fips), fips, date_num);
-
-      ArrayList<Eviction> prev = evic_map.get(area);
-      if (prev == null) {
-        prev = new ArrayList<Eviction>();
+      if (fips != null) {
+        Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(fips), fips, date_num);
+        ArrayList<Eviction> prev = evic_map.get(area);
+        if (prev == null) {
+          prev = new ArrayList<Eviction>();
+        }
+        prev.add(e);
+        evic_map.put(area, prev); 
       }
-      prev.add(e);
-      evic_map.put(area, prev);
     }
   }
   
@@ -99,6 +97,7 @@ void draw() {
     ArrayList<Eviction> evic = (ArrayList<Eviction>)((Map.Entry)itr.next()).getValue();
     drawEdges(evic);
   }
+  updateCam();
 }
 
 void drawData() {
@@ -153,7 +152,7 @@ int chooseAlpha(Eviction e) {
     case "MHI - Advanced Exclusion":
       return 240;
     default:
-      return 0;
+      return 10;
   }
 }
 
@@ -167,4 +166,21 @@ void popup(Eviction e) {
    text("Date: " + e.date[0] + "/" + e.date[1] + "/" + e.date[2] + "\nAddress: " + e.addr + "\nArea: " + e.area + "\nDisplacement/Gentrification Typology: " + e.gen_status, 60, 60, 280, 140);
    stroke(255,255,255);
    cam.endHUD();
+}
+
+void setupCamera () {
+  float fov      = PI/3;  // field of view
+  float nearClip = 1;
+  float farClip  = 100000;
+  float aspect   = float(width)/float(height);  
+  perspective(fov, aspect, nearClip, farClip);  
+  cam = new PeasyCam(this, 1300, -2000, 35000, 0);
+}
+
+void updateCam () {
+  float fov      = PI/3;  // field of view
+  float nearClip = 1;
+  float farClip  = 50000;
+  float aspect   = float(width)/float(height);  
+  perspective(fov, aspect, nearClip, farClip);
 }

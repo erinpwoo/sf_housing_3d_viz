@@ -43,6 +43,8 @@ void setup() {
       Pair<Double, Double> loc = parseLoc(evic_table.getString(i, 29));
       String area = evic_table.getString(i, 28);
       String addr = evic_table.getString(i, 2);
+      String fips = evic_table.getString(i, 44);
+      //print(evic_table.getString(i, 44)+"\t");
       // parsing date
       String[] date = split(evic_table.getString(i, 6), '-');
       int month = Integer.parseInt(date[0]);
@@ -63,8 +65,7 @@ void setup() {
       if (loc.getValue() < min_lat) {
         min_lat = loc.getValue();
       }
-
-      Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(" "), " ", date_num);
+      Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(fips), fips, date_num);
       ArrayList<Eviction> prev = evic_map.get(area);
       if (prev == null) {
         prev = new ArrayList<Eviction>();
@@ -113,8 +114,8 @@ void drawEdges(ArrayList<Eviction> e) {
   strokeWeight(.1);
   //noFill();
   int[] colors = getColorForArea(e.get(0));
-  
-  color c = color(colors[0],colors[1],colors[2],e.size());
+  float alpha = map(e.size(), minCount, maxCount, 1, 255);
+  color c = color(colors[0],colors[1],colors[2], alpha);
   fill(c);
   stroke(c);
   beginShape();

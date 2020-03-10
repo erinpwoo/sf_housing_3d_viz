@@ -44,7 +44,6 @@ void setup() {
       String area = evic_table.getString(i, 28);
       String addr = evic_table.getString(i, 2);
       String fips = evic_table.getString(i, 44);
-      //print(evic_table.getString(i, 44)+"\t");
       // parsing date
       String[] date = split(evic_table.getString(i, 6), '-');
       int month = Integer.parseInt(date[0]);
@@ -65,7 +64,9 @@ void setup() {
       if (loc.getValue() < min_lat) {
         min_lat = loc.getValue();
       }
+      
       Eviction e = new Eviction(loc.getKey(), loc.getValue(), parsedDate, area, addr, geo_fips.get(fips), fips, date_num);
+
       ArrayList<Eviction> prev = evic_map.get(area);
       if (prev == null) {
         prev = new ArrayList<Eviction>();
@@ -108,14 +109,12 @@ void drawData() {
       drawPoint(e);
     }
   }
-} 
+}
 
 void drawEdges(ArrayList<Eviction> e) {
   strokeWeight(.1);
-  //noFill();
   int[] colors = getColorForArea(e.get(0));
-  float alpha = map(e.size(), minCount, maxCount, 1, 255);
-  color c = color(colors[0],colors[1],colors[2], alpha);
+  color c = color(colors[0],colors[1],colors[2], chooseAlpha(e.get(0)));
   fill(c);
   stroke(c);
   beginShape();
@@ -133,4 +132,39 @@ Pair<Double, Double> parseLoc(String in) {
   String str = in.substring(7, in.length()-1);
   String[] s = str.split(" ");
   return new Pair<Double, Double>(Double.parseDouble(s[0]), Double.parseDouble(s[1]));
+}
+
+int chooseAlpha(Eviction e) {
+  switch (e.gen_status) {
+    case "LI - Not Losing Low Income Households":
+      return 30;
+    case "LI - At Risk of Gentrification and/or Displacement":
+      return 60;
+    case "LI - Ongoing Gentrification and/or Displacement":
+      return 90;
+    case "MHI - Advanced Gentrification":
+      return 120;
+    case "MHI - Not Losing Low Income Households":
+      return 150;
+    case "MHI - At Risk of Exclusion":
+      return 180;
+    case "MHI - Ongoing Exclusion":
+      return 210;
+    case "MHI - Advanced Exclusion":
+      return 240;
+    default:
+      return 0;
+  }
+}
+
+void popup(Eviction e) {
+   cam.beginHUD();
+   noStroke();
+   fill(255,255,255);
+   textSize(12.5);
+   rect(50,50, 300,150, 2);
+   fill(0,0,0);
+   text("Date: " + e.date[0] + "/" + e.date[1] + "/" + e.date[2] + "\nAddress: " + e.addr + "\nArea: " + e.area + "\nDisplacement/Gentrification Typology: " + e.gen_status, 60, 60, 280, 140);
+   stroke(255,255,255);
+   cam.endHUD();
 }

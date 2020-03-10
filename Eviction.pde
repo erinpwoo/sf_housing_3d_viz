@@ -25,13 +25,19 @@ void drawPoint(Eviction evic) {
   float lat =  map((float)evic.lat, (float)min_lat, (float)max_lat, -3000.0, 3000.0);
   pushMatrix();
   translate(lon, lat, evic.date_num);
-  strokeWeight(3);
+  strokeWeight(4);
   translate(width/2, height/2);
   int[] colors = getColorForArea(evic);
   color c = color(colors[0],colors[1],colors[2]);
   stroke(c);
   point(0, 0, 0);
   popMatrix();
+  
+  if (overPoint(screenX(lon, lat, evic.date_num), screenY(lon, lat, evic.date_num), 10)) {
+      popup(evic);
+  } else {
+     noFill();
+  }
 }
 
 int[] getColorForArea(Eviction e) {
@@ -168,4 +174,14 @@ int[] getColorForArea(Eviction e) {
   }
   
   return colors;
+}
+
+boolean overPoint(float x, float y, float diameter) {
+  float disX = x - mouseX;
+  float disY = y - mouseY;
+  if(sqrt(sq(disX) + sq(disY)) < diameter/2 ) {
+    return true;
+  } else {
+    return false;
+  }
 }

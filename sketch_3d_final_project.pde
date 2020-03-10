@@ -136,7 +136,7 @@ Pair<Double, Double> parseLoc(String in) {
 int chooseAlpha(Eviction e) {
   switch (e.gen_status) {
     case "LI - Not Losing Low Income Households":
-      return 30;
+      return 30 ;
     case "LI - At Risk of Gentrification and/or Displacement":
       return 60;
     case "LI - Ongoing Gentrification and/or Displacement":

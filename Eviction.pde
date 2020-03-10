@@ -30,16 +30,16 @@ void drawPoint(Eviction evic) {
   int[] colors = getColorForArea(evic);
   color c = color(colors[0],colors[1],colors[2]);
   stroke(c);
-  point(0, 0, 0);
   
-  float x = screenX(lon, lat, evic.date_num);
-  float y = screenY(lon, lat, evic.date_num);
+  float x = screenX(0,0,0);
+  float y = screenY(0,0,0);
   
-  if (overPoint(screenX(x, y, evic.date_num), screenY(y, y, evic.date_num), 5)) {
+  if (overPoint(x, y, 5)) {
       popup(evic);
   } else {
      noFill();
   }
+  point(0, 0, 0);
   popMatrix();
 }
 

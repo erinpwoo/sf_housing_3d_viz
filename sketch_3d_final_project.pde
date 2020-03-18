@@ -94,13 +94,13 @@ void draw() {
   background(0);
   noStroke();
   fill(200, 20);
-  drawData();
   translate(width/2, height/2);
   Iterator itr = evic_map.entrySet().iterator();
   while (itr.hasNext()) {
     ArrayList<Eviction> evic = (ArrayList<Eviction>)((Map.Entry)itr.next()).getValue();
     drawEdges(evic);
   }
+  drawData();
   updateCam();
 }
 
@@ -172,10 +172,12 @@ int chooseAlpha(Eviction e) {
 void popup(Eviction e) {
    cam.beginHUD();
    noStroke();
-   noFill();
-   fill(255,255,255);
+   //fill(0);
+   //rect(50,50, 350,200, 2);
    textSize(16);
+   fill(255,255,255);
    text("Date: " + e.date[0] + "/" + e.date[1] + "/" + e.date[2] + "\nAddress: " + e.addr + "\nArea: " + e.area + "\nDisplacement/Gentrification Typology: " + e.gen_status, 60, 60, 300, 200);
+   stroke(255, 255, 255);
    cam.endHUD();
 }
 

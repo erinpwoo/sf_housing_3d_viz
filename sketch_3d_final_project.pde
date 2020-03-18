@@ -100,6 +100,7 @@ void draw() {
     ArrayList<Eviction> evic = (ArrayList<Eviction>)((Map.Entry)itr.next()).getValue();
     drawEdges(evic);
   }
+  drawLabels();
   drawData();
   updateCam();
 }
@@ -164,6 +165,18 @@ int chooseAlpha(Eviction e) {
       return 240;
     default:
       return 10;
+  }
+}
+
+void drawLabels() {
+  for (int i = 1997; i < 2021; i++) {
+    int date_num = ((i - 1996)*365)*5;
+    pushMatrix();
+    textSize(300);
+    fill(255);
+    text(str(i), -3000, -3000, date_num);
+    noFill();
+    popMatrix();
   }
 }
 

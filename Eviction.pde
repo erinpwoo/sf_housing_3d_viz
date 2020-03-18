@@ -26,7 +26,6 @@ void drawPoint(Eviction evic) {
   pushMatrix();
   translate(lon, lat, evic.date_num);
   strokeWeight(4);
-  translate(width/2, height/2);
   int[] colors = getColorForArea(evic);
   color c = color(colors[0],colors[1],colors[2]);
   float x = screenX(0,0,0);

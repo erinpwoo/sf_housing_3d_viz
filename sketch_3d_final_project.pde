@@ -122,22 +122,20 @@ void drawEdges(ArrayList<Eviction> e) {
   stroke(c);
   beginShape();
   for (int i = 0; i < e.size(); i++) {
-    if (i % 10 == 0) {
-      float lon = map((float)e.get(i).lon, (float)min_lon, (float)max_lon, -3000.0, 3000.0);
-      float lat =  map((float)e.get(i).lat, (float)min_lat, (float)max_lat, -3000.0, 3000.0); 
+     float lon = map((float)e.get(i).lon, (float)min_lon, (float)max_lon, -3000.0, 3000.0);
+     float lat =  map((float)e.get(i).lat, (float)min_lat, (float)max_lat, -3000.0, 3000.0); 
       
-      // drawing new polygon when year changes
-      if (i > 0) {
-        if (e.get(i).date[2] != e.get(i-1).date[2]) {
-          endShape();
-          beginShape();
-        }
-      }
-      
-      vertex(lon,lat, e.get(i).date_num);
-    }
-  }
-  endShape();
+     // drawing new polygon when year changes
+     if (i > 0) {
+       if (e.get(i).date[2] != e.get(i-1).date[2]) {
+         endShape(CLOSE);
+         beginShape();
+       }
+     }
+     
+     if (i % 10 == 0) curveVertex(lon, lat, e.get(i).date_num);
+   }
+  endShape(CLOSE);
 }
 
 Pair<Double, Double> parseLoc(String in) {
@@ -172,8 +170,8 @@ int chooseAlpha(Eviction e) {
 void popup(Eviction e) {
    cam.beginHUD();
    noStroke();
-   //fill(0);
-   //rect(50,50, 350,200, 2);
+   fill(0);
+   rect(50,50, 350,200, 2);
    textSize(16);
    fill(255,255,255);
    text("Date: " + e.date[0] + "/" + e.date[1] + "/" + e.date[2] + "\nAddress: " + e.addr + "\nArea: " + e.area + "\nDisplacement/Gentrification Typology: " + e.gen_status, 60, 60, 300, 200);

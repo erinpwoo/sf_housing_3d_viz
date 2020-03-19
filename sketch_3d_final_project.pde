@@ -25,7 +25,7 @@ void setup() {
 
   evic_row_ct = evic_table.getRowCount();
   gen_row_ct = gen_table.getRowCount();
-
+  print(gen_row_ct);
   geo_fips = new HashMap<String, String>();
 
   for (int i = 0; i < gen_row_ct; i++) {
@@ -46,6 +46,11 @@ void setup() {
       String area = evic_table.getString(i, 28);
       String addr = evic_table.getString(i, 2);
       String fips = evic_table.getString(i, 44);
+      
+      if (area == "Mission") {
+       print(fips); 
+      }
+
       // parsing date
       String[] date = split(evic_table.getString(i, 6), '-');
       int month = Integer.parseInt(date[0]);

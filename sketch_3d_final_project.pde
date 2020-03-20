@@ -1,5 +1,22 @@
 /*  Final 3D Project - SF Evictions by Neighborhood - by Erin Woo
     MAT 259A - Winter 2020
+    
+    Data Sources:
+    Displacement and Gentrification Data (2017): https://www.urbandisplacement.org/map/sf
+    Eviction Data: https://data.sfgov.org/Housing-and-Buildings/Eviction-Notices/5cei-gny5
+    FCC Census Block/Area FIPS API: https://anypoint.mulesoft.com/exchange/portals/fccdomain/55a35f65-7efa-42af-98af-41ae37d824b2/area-and-census-block/
+    
+    Description:
+    This data visualization shows eviction data in San Francisco from the years 1997 to present. Each point represents a single eviction.
+    The x and y coordinates of each point correspond to the points longitude and latitude mapping values, while it's position in the z-axis corresponds to the date of the eviction.
+    Each color corresponds to a different neighborhood in San Francisco. A group of evictions in the same neighborhood occuring in the same year are connected by a single polygon shape.
+    Some points may not be connected by a polygon, as the edges are only drawn between every 10 points (to speed up the graphics, since there are ~40,000 data points).
+    The transparency of the polygon corresponds to the gentrification status of the area as of 2017. The more advanced the gentrification, the higher the polygon's opacity. More information on this typology can be found at www.urbandisplacement.org.
+    
+    To navigate through the sketch:
+    Scroll down to zoom in and scroll up to zoom out.
+    Click and drag in the direction you'd like to rotate the sketch.
+    Hovering over a data point reveals more information about the eviction, such as the address, date, and gentrification typology of the area as of 2017.
 */
 
 import peasy.*;
@@ -25,7 +42,6 @@ void setup() {
 
   evic_row_ct = evic_table.getRowCount();
   gen_row_ct = gen_table.getRowCount();
-  print(gen_row_ct);
   geo_fips = new HashMap<String, String>();
 
   for (int i = 0; i < gen_row_ct; i++) {
@@ -47,10 +63,6 @@ void setup() {
       String addr = evic_table.getString(i, 2);
       String fips = evic_table.getString(i, 44);
       
-      if (area == "Mission") {
-       print(fips); 
-      }
-
       // parsing date
       String[] date = split(evic_table.getString(i, 6), '-');
       int month = Integer.parseInt(date[0]);
@@ -76,6 +88,7 @@ void setup() {
         ArrayList<Eviction> prev = evic_map.get(area);
         if (prev == null) {
           prev = new ArrayList<Eviction>();
+          //print(area + "(" + fips + ")" + ": " + geo_fips.get(fips)+"\t");
         }
         prev.add(e);
         evic_map.put(area, prev); 
@@ -151,6 +164,7 @@ Pair<Double, Double> parseLoc(String in) {
 }
 
 int chooseAlpha(Eviction e) {
+  if (e.gen_status == null) return 10;
   switch (e.gen_status) {
     case "LI - Not Losing Low Income Households":
       return 30 ;

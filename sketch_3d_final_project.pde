@@ -148,6 +148,9 @@ void drawEdges(ArrayList<Eviction> e) {
      if (i > 0) {
        if (e.get(i).date[2] != e.get(i-1).date[2]) {
          endShape(CLOSE);
+         color c2 = color(colors[0],colors[1],colors[2], chooseAlpha(e.get(i)));
+         fill(c2);
+         stroke(c2);
          beginShape();
        }
      }
